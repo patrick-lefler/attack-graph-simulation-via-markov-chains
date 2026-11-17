@@ -1,0 +1,113 @@
+# Every model and analysis parameter for this project.
+# type: assumption = an illustrative or elicited value with no empirical source;
+#       design     = an analysis choice (simulation size, perturbation size) that
+#                    affects precision or framing, not the model itself.
+# range: the values the analysis actually explores, or "not varied".
+#
+# Several numbers derived from these values are quoted as fixed text on the site.
+# stopifnot() guards in R/01_model.R stop the render if a change here breaks one;
+# update the text along with the guard.
+
+seed:
+  value: 42
+  type: design
+  note: Set before every random block, so results do not depend on execution order.
+
+states:
+  transient:
+    - "S1: Recon & Phishing"
+    - "S2: Initial Foothold"
+    - "S3: Privilege Escalation"
+    - "S4: Lateral Movement"
+    - "S5: Domain Dominance"
+    - "S6: Payload Staging"
+  absorbing:
+    - "A1: Contained / Terminated"
+    - "A2: Data Exfiltration"
+    - "A3: Enterprise Ransomware"
+
+step_hours:
+  value: 4
+  type: assumption
+  range: not varied
+  note: >
+    Mean duration of one step, the same for every stage. The per-step probabilities
+    only have meaning for this step length, so changing it requires re-eliciting
+    the transition matrices.
+
+transition_matrices:
+  type: assumption
+  range: >
+    Uncertainty around each row is represented by a Dirichlet(alpha * row)
+    distribution; see dirichlet.alpha_conc.
+  note: >
+    Expert-elicited, illustrative values, not calibrated to any benchmark or
+    telemetry. Each transient row lists the per-step probability of moving to
+    S1..S6, A1..A3, in that order, and must sum to 1. Absorbing rows are the
+    identity and are not listed.
+  baseline:
+    S1: [0.10, 0.65, 0.00, 0.00, 0.00, 0.00, 0.25, 0.00, 0.00]
+    S2: [0.00, 0.15, 0.55, 0.05, 0.00, 0.00, 0.25, 0.00, 0.00]
+    S3: [0.00, 0.00, 0.10, 0.60, 0.10, 0.00, 0.20, 0.00, 0.00]
+    S4: [0.00, 0.00, 0.05, 0.15, 0.55, 0.10, 0.15, 0.00, 0.00]
+    S5: [0.00, 0.00, 0.00, 0.00, 0.10, 0.70, 0.10, 0.05, 0.05]
+    S6: [0.00, 0.00, 0.00, 0.00, 0.00, 0.05, 0.10, 0.40, 0.45]
+  improved:
+    # A hand-set scenario: A1 probabilities rise 2.0x to 3.5x by stage. Not derived
+    # from any specific control.
+    S1: [0.05, 0.40, 0.00, 0.00, 0.00, 0.00, 0.55, 0.00, 0.00]
+    S2: [0.00, 0.10, 0.35, 0.05, 0.00, 0.00, 0.50, 0.00, 0.00]
+    S3: [0.00, 0.00, 0.05, 0.40, 0.05, 0.00, 0.50, 0.00, 0.00]
+    S4: [0.00, 0.00, 0.02, 0.10, 0.40, 0.08, 0.40, 0.00, 0.00]
+    S5: [0.00, 0.00, 0.00, 0.00, 0.05, 0.50, 0.35, 0.05, 0.05]
+    S6: [0.00, 0.00, 0.00, 0.00, 0.00, 0.05, 0.35, 0.30, 0.30]
+
+sensitivity:
+  shift_delta:
+    value: 0.05
+    type: design
+    range: not varied
+    note: Probability moved from a row's largest non-self, non-A1 edge to A1.
+  prop_rel:
+    value: 0.10
+    type: design
+    range: not varied
+    note: Relative increase in a row's A1 probability, taken pro rata from the other exits.
+
+dirichlet:
+  alpha_conc:
+    value: 50
+    type: assumption
+    range: [10, 200]
+    note: >
+      Concentration standing in for "moderate confidence" in the elicited rows.
+      The alpha sweep shows it changes where the tipping point falls.
+  alpha_grid:
+    value: [10, 20, 50, 200]
+    type: design
+    note: Concentrations compared in the alpha sweep.
+  n_draws:
+    value: 5000
+    type: design
+    note: Draws per regime for the main uncertainty, correlated-detection and paired analyses.
+  n_sweep:
+    value: 2000
+    type: design
+    note: Draws per alpha in the sweep.
+  n_rank:
+    value: 2000
+    type: design
+    note: Draws for the one-row ranking robustness check.
+  shared_sd_log:
+    value: 0.35
+    type: assumption
+    range: not varied
+    note: >
+      Log-scale SD of the common factor applied to every row's A1 probability,
+      representing detection quality that is correlated across stages.
+
+simulation:
+  n_sim:
+    value: 20000
+    type: design
+    note: Monte Carlo walks from S1 for the solver correctness check.
