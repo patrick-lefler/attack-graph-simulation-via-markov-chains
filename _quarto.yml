@@ -1,6 +1,55 @@
 project:
-  title: "rQuarto_multi_stage_attack_graph_simulation_via_markov_chains"
+  type: website
   output-dir: docs
+  render:
+    - index.qmd
+    - model.qmd
+    - robustness.qmd
+    - reproducibility.qmd
+    - license.qmd
 
-editor: visual
+website:
+  title: "Multi-Stage Attack Graph Simulation Via Markov Chains"
+  search: false
+  page-navigation: true
+  sidebar:
+    style: floating
+    contents:
+      - href: index.qmd
+        text: Overview
+      - href: model.qmd
+        text: Model
+      - href: robustness.qmd
+        text: Robustness
+      - href: reproducibility.qmd
+        text: Reproducibility
+  page-footer:
+    center: "© 2026 Patrick Lefler ⦁ [MIT License](license.qmd) ⦁ Built with R & Quarto"
+
+format:
+  html:
+    code-copy: true
+    code-fold: true
+    code-overflow: wrap
+    code-summary: "Display code"
+    code-tools: true
+    fig-height: 7
+    fig-width: 10
+    lightbox: true
+    linkcolor: "#0166CC"
+    page-layout: full
+    smooth-scroll: true
+    theme: [sandstone, theme.scss]
+    toc: true
+    toc-title: "Contents"
+
+execute:
+  freeze: auto
+  warning: false
+  message: false
+
+knitr:
+  opts_chunk:
+    comment: "#>"
+
 
