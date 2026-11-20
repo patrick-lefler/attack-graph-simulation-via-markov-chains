@@ -14,7 +14,8 @@ Every number on this site is computed at render time from the parameters in `par
 
 ## Quick start {#quick-start}
 
-1.  Clone the repository and open the project folder in RStudio or Positron.
+1. The code and data are in the GitHub repository [patrick-lefler/attack-graph-simulation-via-markov-chains](https://github.com/patrick-lefler/attack-graph-simulation-via-markov-chains). You need R 4.3 or later and Quarto 1.5 or later. To rebuild the results, run the tests and render the site from a clean copy:
+
 2.  Restore the packages with `renv::restore()` (see [Software environment](#environment)).
 3.  Rebuild everything from the project root:
 
