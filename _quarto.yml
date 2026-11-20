@@ -9,7 +9,6 @@ project:
     - license.qmd
 
 website:
-  title: "Multi-Stage Attack Graph Simulation Via Markov Chains"
   favicon: assets/images/favicon.svg
   search: false
   page-navigation: true
